@@ -1,60 +1,120 @@
-import {useState, useEffect} from 'react'
+import {useState} from 'react'
 import {addFootball} from "../service/FootballService.js";
+import {Link} from "react-router-dom";
+import * as Yup from "yup";
+import {toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "react-toastify/dist/ReactToastify.css";
+import {ErrorMessage, Field, Form, Formik} from "formik";
+import {Button, Container, Card, Row, Col, Form as BsForm} from "react-bootstrap";
+import {useNavigate} from "react-router-dom";
 
-function Add({setReload}) {
-    const [form, setForm] = useState({
-        id: "",
-        code: "",
-        name: "",
-        dob: "",
-        value: "",
-        position: "",
+function Add() {
+    const navigate = useNavigate();
+
+    const validation = Yup.object({
+        id: Yup.number().required("Not empty")
+            .positive("Id >0").integer("positive integer"),
+        code: Yup.string().required("Code not empty"),
+        name: Yup.string()
+            .required("Name not empty")
+            .matches(/^[A-Z][a-z]*(\s[A-Z][a-z]*)+$/,"Name not format!"),
+        dob: Yup.string()
+            .required("dob not empty"),
+        value: Yup.number()
+            .required("Value not empty")
+            .positive("Value > 0"),
+        position: Yup.string()
+            .required("Position not empty"),
     });
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm((prev) => ({
-            ...prev, [name]: value }));
-    }
-    const handleAddFootball = () => {
+
+    const handleSubmit = (values) => {
         const newFootball = {
-            ...form,
-            id: Number(form.id),
-            value: Number(form.value),
+            ...values,
+            id: Number(values.id),
+            value: Number(values.value),
         };
         addFootball(newFootball);
-        setReload((prev) => !prev);
-        setForm({
-            id: "",
-            code: "",
-            name: "",
-            dob: "",
-            value: "",
-            position: "",
-        });
-    };
+        toast.success("Added football");
+        setTimeout(() => {
+            navigate("/football")
+        }, 1000);
+    }
     return (
-        <>
-            <h3>Add new football</h3>
-            <input name="id" value={form.id}
-                   onChange={handleChange} placeholder="Enter ID"/>
+        <Container className="mt-5">
+            <Row className="justify-content-center">
+                <Col md={6}>
+                    <Card className="shadow-lg p-4 rounded-4">
+                        <h3 className="text-center mb-4">⚽ Add New Football</h3>
 
-            <input name="code" value={form.code}
-                onChange={handleChange} placeholder="Enter Code"/>
+                        <Formik
+                            initialValues={{
+                                id: "",
+                                code: "",
+                                name: "",
+                                dob: "",
+                                value: "",
+                                position: "",
+                            }}
+                            validationSchema={validation}
+                            onSubmit={handleSubmit}
+                        >
+                            <Form>
 
-            <input name="name" value={form.name}
-                onChange={handleChange} placeholder="Enter Name"/>
+                                <BsForm.Group className="mb-3">
+                                    <BsForm.Label>ID</BsForm.Label>
+                                    <Field name="id" className="form-control"/>
+                                    <ErrorMessage name="id" component="div" className="text-danger"/>
+                                </BsForm.Group>
 
-            <input type="date" name="dob" value={form.dob}
-                onChange={handleChange}/>
+                                <BsForm.Group className="mb-3">
+                                    <BsForm.Label>Code</BsForm.Label>
+                                    <Field name="code" className="form-control"/>
+                                    <ErrorMessage name="code" component="div" className="text-danger"/>
+                                </BsForm.Group>
 
-            <input name="value" value={form.value}
-                onChange={handleChange} placeholder="Enter Transfer"/>
+                                <BsForm.Group className="mb-3">
+                                    <BsForm.Label>Name</BsForm.Label>
+                                    <Field name="name" className="form-control"/>
+                                    <ErrorMessage name="name" component="div" className="text-danger"/>
+                                </BsForm.Group>
 
-            <input name="position" value={form.position}
-                onChange={handleChange} placeholder="Enter Position"/>
-            <br/>
-            <button onClick={handleAddFootball}>Add Football</button>
-        </>
+                                <BsForm.Group className="mb-3">
+                                    <BsForm.Label>Date of Birth</BsForm.Label>
+                                    <Field type="date" name="dob" className="form-control"/>
+                                    <ErrorMessage name="dob" component="div" className="text-danger"/>
+                                </BsForm.Group>
+
+                                <BsForm.Group className="mb-3">
+                                    <BsForm.Label>Transfer Value</BsForm.Label>
+                                    <Field name="value" className="form-control"/>
+                                    <ErrorMessage name="value" component="div" className="text-danger"/>
+                                </BsForm.Group>
+
+                                <BsForm.Group className="mb-3">
+                                    <BsForm.Label>Position</BsForm.Label>
+                                    <Field name="position" className="form-control"/>
+                                    <ErrorMessage name="position" component="div" className="text-danger"/>
+                                </BsForm.Group>
+
+                                <div className="d-flex justify-content-between">
+                                    <Link to="/football">
+                                        <Button variant="secondary">Back</Button>
+                                    </Link>
+
+                                    <Button variant="success" type="submit">
+                                        Add Football
+                                    </Button>
+                                </div>
+
+                            </Form>
+                        </Formik>
+
+                    </Card>
+                </Col>
+            </Row>
+        </Container>
     );
 }
+
 export default Add;

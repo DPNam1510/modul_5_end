@@ -1,5 +1,6 @@
 import {Button, Modal} from "react-bootstrap";
 import {deleteFootball} from "../service/FootballService.js";
+import {toast} from "react-toastify";
 
 function Delete({isShowModal, deleteFootball:football,closeModal,setReload}) {
     const handleClose = () => {
@@ -7,6 +8,7 @@ function Delete({isShowModal, deleteFootball:football,closeModal,setReload}) {
     }
     const handleDelete = () => {
         deleteFootball(football.id);
+        toast.success("Football deleted successfully.");
         closeModal(false);
         setReload(prev => !prev);
     }
@@ -18,7 +20,7 @@ function Delete({isShowModal, deleteFootball:football,closeModal,setReload}) {
                 </Modal.Header>
                 <Modal.Body>
                     <p>
-                        Do you want delete: <b>{deleteFootball.name}</b>
+                        Do you want delete: <b>{football.name}</b>
                     </p>
                 </Modal.Body>
                 <Modal.Footer>
