@@ -1,0 +1,47 @@
+{
+  "footballs": [
+    {
+      "id": 1,
+      "code": "C001",
+      "name": "Messi",
+      "dob": "1987-06-24",
+      "value": 2000000,
+      "positionId": 1
+    },
+    {
+      "id": 3,
+      "code": "1510222",
+      "name": "Dinh Phuong Nam",
+      "dob": "2026-04-03",
+      "value": 80000,
+      "positionId": 1
+    },
+    {
+      "id": 4,
+      "code": "2412",
+      "name": "Mai Tuong Vi",
+      "dob": "2006-12-24",
+      "value": 1000000,
+      "positionId": 3
+    }
+  ],
+  "positions": [
+    {
+      "id": 1,
+      "name": "Tiền đạo"
+    },
+    {
+      "id": 2,
+      "name": "Tiền vệ"
+    },
+    {
+      "id": 3,
+      "name": "Hậu vệ"
+    },
+    {
+      "id": 4,
+      "name": "Thủ môn"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}

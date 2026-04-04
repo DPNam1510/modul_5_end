@@ -11,15 +11,18 @@ import {Route, Routes} from "react-router";
 import Add from "./component/Add.jsx";
 import Detail from "./component/Detail.jsx";
 import {ToastContainer} from "react-toastify";
+import Update from "./component/Update.jsx";
 
 function App() {
     return (
         <>
             <Header/>
             <Routes>
+                <Route path={'/'} element={<List/>}/>
                 <Route path={'/football'} element={<List/>}/>
                 <Route path={'/football/add'} element={<Add/>}/>
                 <Route path={'/football/detail/:id'} element={<Detail/>}/>
+                <Route path={'/football/update/:id'} element={<Update/>}/>
             </Routes>
             <ToastContainer/>
         </>

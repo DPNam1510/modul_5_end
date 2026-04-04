@@ -1,39 +1,70 @@
-import {useEffect,useState} from 'react'
-import {addFootball} from "../service/FootballService.js";
+import {useEffect,useState} from "react";
+import {findById,updateFootball} from "../service/FootballService.js";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import {getList} from "../service/PositionService.js";
-import {Link} from "react-router-dom";
-import * as Yup from "yup";
+import {Button, Card, Col, Container, Form as BsForm, Row} from "react-bootstrap";
 import {toast} from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import "react-toastify/dist/ReactToastify.css";
-import {ErrorMessage, Field, Form, Formik} from "formik";
-import {Button, Container, Card, Row, Col, Form as BsForm} from "react-bootstrap";
-import {useNavigate} from "react-router-dom";
+import * as Yup from "yup";
+import {ErrorMessage, Field, Formik,Form} from "formik";
 
-function Add() {
+function Update() {
+
+    const [football, setFootball] = useState({
+        id: "",
+        code: "",
+        name: "",
+        dob: "",
+        value: "",
+        positionId: ""
+    });
+    const {id} = useParams();
     const navigate = useNavigate();
-    const [positions, setPositions] = useState([]);
+    const [positionList, setPositionList] = useState([]);
+
+    useEffect( () => {
+        const fetDataPosition = async () => {
+            setPositionList(await getList());
+        }
+        fetDataPosition();
+    }, []);
 
     useEffect(() => {
-        const fetPosition = async () => {
-            const data = await getList();
-            setPositions(data);
-        }
-        fetPosition();
-    },[]);
-
-    const handleSubmit = async (values) => {
-        const newFootball = {
-            ...values,
-            value: Number(values.value),
-            positionId: Number(values.positionId),
+        const fetData = async () =>{
+            const footballData = await findById(id);
+            if(footballData!=null){
+                setFootball({
+                    ...footballData,
+                    positionId: footballData.positionId
+                })
+            }
         };
-        await addFootball(newFootball);
-        toast.success("Added football");
-        setTimeout(() => {
-            navigate("/football")
-        }, 1000);
-    };
+        fetData();
+    },[id]);
+
+
+    const handleSubmit =  (e) => {
+        console.log("---------okkkk-------------------")
+        e = {
+            ...e,
+            positionId: Number(e.positionId),
+        }
+        const fetData = async ()=>{
+            const isSuccess = await updateFootball(e);
+            console.log(isSuccess,"---result");
+
+            if(isSuccess){
+                toast.success("Update football successfully!");
+                navigate("/football");
+                console.log(isSuccess,"---result");
+            }else {
+                toast.error("Update not football successfully!");
+                console.log(isSuccess,"---fails");
+
+            }
+        }
+        fetData();
+
+    }
 
     const validation = Yup.object({
         code: Yup.string().required("Code not empty"),
@@ -53,20 +84,13 @@ function Add() {
             <Row className="justify-content-center">
                 <Col md={6}>
                     <Card className="shadow-lg p-4 rounded-4">
-                        <h3 className="text-center mb-4">⚽ Add New Football</h3>
+                        <h3 className="text-center mb-4">⚽ Update Football</h3>
 
                         <Formik
-                            initialValues={{
-                                id: "",
-                                code: "",
-                                name: "",
-                                dob: "",
-                                value: "",
-                                positionId: "",
-                            }}
+                            initialValues={football}
                             validationSchema={validation}
-                            onSubmit={handleSubmit}
-                        >
+                            enableReinitialize={true}
+                            onSubmit={handleSubmit}>
                             <Form>
                                 <BsForm.Group className="mb-3">
                                     <BsForm.Label>Code</BsForm.Label>
@@ -96,7 +120,7 @@ function Add() {
                                     <BsForm.Label>Position</BsForm.Label>
                                     <Field as="select" name="positionId" className="form-select">
                                         <option value="">-- Select Position --</option>
-                                        {positions.map(p => (
+                                        {positionList.map(p => (
                                             <option key={p.id} value={p.id}>{p.name}
                                             </option>
                                         ))}
@@ -110,7 +134,7 @@ function Add() {
                                     </Link>
 
                                     <Button variant="success" type="submit">
-                                        Add Football
+                                        Update Football
                                     </Button>
                                 </div>
 
@@ -123,5 +147,4 @@ function Add() {
         </Container>
     );
 }
-
-export default Add;
+export default Update

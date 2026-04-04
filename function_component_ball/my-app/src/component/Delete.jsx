@@ -6,11 +6,15 @@ function Delete({isShowModal, deleteFootball:football,closeModal,setReload}) {
     const handleClose = () => {
         closeModal(false);
     }
-    const handleDelete = () => {
-        deleteFootball(football.id);
-        toast.success("Football deleted successfully.");
-        closeModal(false);
-        setReload(prev => !prev);
+    const handleDelete = async () => {
+        const isSuccess = await deleteFootball(football.id);
+        if (isSuccess) {
+            closeModal(false);
+            setReload(prev => !prev);
+            toast.success("Football deleted successfully!");
+        }else {
+            toast.error("Delete fails!");
+        }
     }
     return (
         <>
